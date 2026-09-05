@@ -2,14 +2,16 @@ import { detectLang, setLang, getLang } from "./i18n";
 import { initCake } from "./modes/cake";
 import { initLadder } from "./modes/ladder";
 import { initQuiz } from "./modes/quiz";
+import { initWhy } from "./modes/why";
 
-const MODES = ["cake", "ladder", "quiz"] as const;
+const MODES = ["cake", "ladder", "quiz", "why"] as const;
 type Mode = (typeof MODES)[number];
 
 const inits: Record<Mode, () => void> = {
   cake: initCake,
   ladder: initLadder,
   quiz: initQuiz,
+  why: initWhy,
 };
 const inited = new Set<Mode>();
 

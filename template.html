@@ -88,6 +88,28 @@
   .reveal { border-left: 3px solid var(--red); padding: 2px 0 2px 14px; margin: 18px 0; }
   .reveal h3 { margin: 14px 0 6px; font-size: 15px; }
   .reveal p, .reveal li { font-size: 14.5px; }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 6px 18px 12px;
+    margin: 14px 0;
+    scroll-margin-top: 12px;
+  }
+  .card h3 { font-size: 16px; margin: 12px 0 6px; }
+  .card p { font-size: 14.5px; margin: 8px 0; }
+  .toc {
+    display: flex; gap: 6px 14px; flex-wrap: wrap; align-items: baseline;
+    font-size: 13px; color: var(--dim);
+    background: var(--card); border: 1px solid var(--line); border-radius: 8px;
+    padding: 8px 14px; margin: 12px 0;
+  }
+  .toc a { color: var(--blue); text-decoration: none; }
+  .toc a:hover { text-decoration: underline; }
+  .e-demo { border-top: 1px dashed var(--line); margin-top: 14px; padding-top: 4px; }
+  .e-demo h4 { font-size: 14px; margin: 10px 0 2px; }
+  .glossary { padding-left: 20px; margin: 6px 0; }
+  .glossary li { font-size: 14.5px; margin: 6px 0; }
   footer { text-align: center; color: var(--dim); font-size: 12px; margin-top: 40px; }
   @media (max-width: 480px) {
     h1 { font-size: 21px; }
@@ -109,6 +131,7 @@
     <button id="tab-cake" data-i18n="nav.cake">切蛋糕</button>
     <button id="tab-ladder" data-i18n="nav.ladder">莱布尼茨爬梯</button>
     <button id="tab-quiz" data-i18n="nav.quiz">出题</button>
+    <button id="tab-why" data-i18n="nav.why">为什么</button>
   </nav>
 
   <!-- F2 切蛋糕 -->
@@ -167,6 +190,64 @@
           <p data-i18n="quiz.reveal.close"></p>
         </div>
       </div>
+    </div>
+  </section>
+
+  <!-- F8 为什么 -->
+  <section id="view-why" hidden>
+    <h2 data-i18n="why.h2">为什么？</h2>
+    <p class="sub" data-i18n-html="why.intro"></p>
+    <nav class="toc">
+      <span class="toc-label" data-i18n="why.toc.label">本页目录</span>
+      <a href="#why-s1" data-i18n="why.t1"></a>
+      <a href="#why-s2" data-i18n="why.t2"></a>
+      <a href="#why-s3" data-i18n="why.t3"></a>
+      <a href="#why-s4" data-i18n="why.t4"></a>
+      <a href="#why-s5" data-i18n="why.t5"></a>
+    </nav>
+    <div class="card" id="why-s1">
+      <h3 data-i18n="why.s1.title"></h3>
+      <p data-i18n-html="why.s1.p1"></p>
+      <p data-i18n-html="why.s1.p2"></p>
+      <p data-i18n-html="why.s1.p3"></p>
+    </div>
+    <div class="card" id="why-s2">
+      <h3 data-i18n="why.s2.title"></h3>
+      <p data-i18n-html="why.s2.p1"></p>
+      <p data-i18n-html="why.s2.p2"></p>
+      <p data-i18n-html="why.s2.p3"></p>
+    </div>
+    <div class="card" id="why-s3">
+      <h3 data-i18n="why.s3.title"></h3>
+      <p data-i18n-html="why.s3.p1"></p>
+      <p data-i18n-html="why.s3.p2"></p>
+      <p data-i18n-html="why.s3.p3"></p>
+    </div>
+    <div class="card" id="why-s4">
+      <h3 data-i18n="why.s4.title"></h3>
+      <p data-i18n-html="why.s4.p1"></p>
+      <p data-i18n-html="why.s4.p2"></p>
+      <p data-i18n-html="why.s4.p3"></p>
+      <p data-i18n-html="why.s4.p4"></p>
+      <div class="e-demo">
+        <h4 data-i18n="why.e.title"></h4>
+        <p class="sub" data-i18n="why.e.sub"></p>
+        <div class="nums">
+          <div class="row"><span class="k" data-i18n="why.e.k.e"></span><span class="v" id="why-e"></span></div>
+          <div class="row"><span class="k" data-i18n="why.e.k.head"></span><span class="v" id="why-e-head"></span></div>
+          <div class="row sum"><span class="k" data-i18n="why.e.k.tail"></span><span class="v" id="why-e-tail"></span></div>
+        </div>
+        <p class="sub" data-i18n="why.e.close"></p>
+      </div>
+    </div>
+    <div class="card" id="why-s5">
+      <h3 data-i18n="why.s5.title"></h3>
+      <ul class="glossary">
+        <li data-i18n-html="why.g.algebraic"></li>
+        <li data-i18n-html="why.g.transcendental"></li>
+        <li data-i18n-html="why.g.indep"></li>
+        <li data-i18n-html="why.g.computable"></li>
+      </ul>
     </div>
   </section>
 
