@@ -1,4 +1,5 @@
 /** dev server：每次请求即时构建（毫秒级），浏览器打开 http://localhost:3141 */
+import { injectMath } from "./tex-table";
 
 async function buildOnce(): Promise<string> {
   const out = await Bun.build({
@@ -13,7 +14,7 @@ async function buildOnce(): Promise<string> {
   }
   const js = await out.outputs[0].text();
   const tpl = await Bun.file("template.html").text();
-  return tpl.replace("/*__SCRIPT__*/", () => js);
+  return injectMath(tpl.replace("/*__SCRIPT__*/", () => js));
 }
 
 const server = Bun.serve({

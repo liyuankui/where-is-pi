@@ -13,5 +13,9 @@ describe("构建产物", () => {
     expect(html).not.toContain('type="module"');
     // 内联脚本非空（主逻辑已注入）
     expect(html).toMatch(/<script>[\s\S]{1000,}<\/script>/);
+    // F9：公式表已注入；字体全部 data: 内联，无外链 url()
+    expect(html).toContain("window.__TEX__");
+    expect(html.match(/url\((?!data:)/g) ?? []).toEqual([]);
+    expect(html).toContain("@font-face{font-family:KaTeX_Main");
   });
 });

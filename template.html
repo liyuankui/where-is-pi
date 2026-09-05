@@ -66,6 +66,10 @@
     overflow-x: auto;
     white-space: nowrap;
   }
+  /* KaTeX 挂载后：display 公式零边距、微放大 */
+  .formula .katex-display { margin: 0; }
+  .formula .katex { font-size: 1.18em; }
+  .formula .katex-display > .katex { white-space: nowrap; }
   canvas { width: 100%; height: 300px; display: block; background: var(--card);
     border: 1px solid var(--line); border-radius: 8px; }
   .nums { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 13px; margin-top: 14px; }
@@ -118,6 +122,7 @@
     canvas { height: 240px; }
   }
 </style>
+  <style>/*__KATEX_CSS__*/</style>
 </head>
 <body>
 <div class="wrap">
@@ -138,7 +143,7 @@
   <section id="view-cake">
     <h2 data-i18n="cake.h2">切蛋糕</h2>
     <p class="sub" data-i18n="cake.sub"></p>
-    <div class="formula">A(c) = ∫₀ᶜ 4/(1+x²) dx　　B(c) = ∫꜀¹ 4/(1+x²) dx　　A + B = π</div>
+    <div class="formula" data-tex="A(c) = \int_0^c \frac{4}{1+x^2}\,dx \qquad B(c) = \int_c^1 \frac{4}{1+x^2}\,dx \qquad A + B = \pi">A(c) = ∫₀ᶜ 4/(1+x²) dx　　B(c) = ∫꜀¹ 4/(1+x²) dx　　A + B = π</div>
     <canvas id="cake-canvas"></canvas>
     <div class="nums">
       <div class="row"><span class="k" data-i18n="cake.k.c">c</span><span class="v" id="cake-c"></span></div>
@@ -153,7 +158,7 @@
   <section id="view-ladder" hidden>
     <h2 data-i18n="lad.h2">莱布尼茨爬梯</h2>
     <p class="sub" data-i18n="lad.sub"></p>
-    <div class="formula">Sₙ = 4 × (1 − 1/3 + 1/5 − … ± 1/(2n−1))</div>
+    <div class="formula" data-tex="S_n = 4\left(1 - \frac{1}{3} + \frac{1}{5} - \frac{1}{7} + \cdots \pm \frac{1}{2n-1}\right)">Sₙ = 4 × (1 − 1/3 + 1/5 − … ± 1/(2n−1))</div>
     <canvas id="lad-canvas"></canvas>
     <div class="btns">
       <button id="lad-plus1" data-i18n="lad.plus1">+1 项</button>
@@ -254,6 +259,7 @@
   <footer data-i18n="app.footer">where-is-pi · 纯静态单文件 · 无网络请求</footer>
 </div>
 <script>
+window.__TEX__ = /*__TEX__*/null;
 /*__SCRIPT__*/
 </script>
 </body>
