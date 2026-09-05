@@ -1,4 +1,4 @@
-# where-is-pi — π 在哪里？
+# where-is-pi — 拼出一个 π · Build π Without π
 
 > Can two numbers that never mention π add up to exactly π? · 两个「看不见 π」的数，能相加等于 π 吗？
 

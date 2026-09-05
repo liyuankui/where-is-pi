@@ -6,7 +6,7 @@
 export type Lang = "zh" | "en";
 
 const zh = {
-  "app.title": "π 在哪里？",
+  "app.title": "拼出一个 π",
   "app.subtitle": "两个「看不见 π」的数，能相加等于 π 吗？",
   "app.footer": "where-is-pi · 纯静态单文件 · 无网络请求",
   "lang.toggle": "EN", // zh 界面下显示的目标语言
@@ -123,7 +123,7 @@ const zh = {
 export type MsgKey = keyof typeof zh;
 
 const en: Record<MsgKey, string> = {
-  "app.title": "Where Is π?",
+  "app.title": "Build π Without π",
   "app.subtitle": "Can two numbers that never mention π add up to π?",
   "app.footer": "where-is-pi · static single file · no network requests",
   "lang.toggle": "中", // en 界面下显示的目标语言
