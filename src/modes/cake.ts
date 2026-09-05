@@ -1,4 +1,4 @@
-/** F2 切蛋糕模式：∫₀¹ 4/(1+x²) 曲线，拖切点 c，实时高精度 A / B / A+B */
+/** 切蛋糕模式：∫₀¹ 4/(1+x²) 曲线，拖切点 c，实时高精度 A / B / A+B */
 import {
   areaA,
   areaB,
@@ -16,7 +16,7 @@ let c = div(fromInt(1), fromInt(2));
 let g: Ctx2D;
 let pending = false;
 
-/** rAF 合帧：pointermove 高频触发时每帧至多一次重算重绘（SPEC 盲区：60fps） */
+/** rAF 合帧：pointermove 高频触发时每帧至多一次重算重绘（高频 pointermove 下保持 60fps） */
 function scheduleUpdate() {
   if (pending) return;
   pending = true;

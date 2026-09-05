@@ -1,4 +1,4 @@
-/** F3 莱布尼茨爬梯：逐项/自动步进，奇偶部分和上下夹逼 π */
+/** 莱布尼茨爬梯：逐项/自动步进，奇偶部分和上下夹逼 π */
 import { Leibniz, mul, fromInt, toFixed } from "../math/leibniz";
 import { computePi } from "../math/analysis";
 import { setupCanvas, type Ctx2D } from "../render/canvas";

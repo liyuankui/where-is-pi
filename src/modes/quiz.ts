@@ -1,4 +1,4 @@
-/** F4 出题模式：先答后揭晓（超越数不可能定理 + 两招伪装构造） */
+/** 出题模式：先答后揭晓（超越数不可能定理 + 两招伪装构造） */
 
 export function initQuiz() {
   const btn = document.getElementById("quiz-btn") as HTMLButtonElement;

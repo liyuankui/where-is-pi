@@ -1,6 +1,6 @@
 /**
  * 定长小数（fixed-point decimal）运算：BigInt 按 10^SCALE 缩放。
- * dist 零外部依赖，故自实现（SPEC 硬约束：高精度库禁入 dist 外链）。
+ * dist 零外部依赖，故自实现（高精度库禁入 dist 外链）。
  */
 export const SCALE = 40; // 小数点后位数（工作精度）
 const D = 10n ** BigInt(SCALE);

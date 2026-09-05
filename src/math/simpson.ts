@@ -1,7 +1,7 @@
 /**
  * 复合 Simpson 积分（高精度定长小数实现）。
  * 用于演示/对照：多项式阶误差 O(h⁴)，达到 ~1e-15 级需数千面板。
- * UI 与 A+B≡π 断言走解析式（analysis.ts），见 SPEC 盲区约束。
+ * UI 与 A+B≡π 断言走解析式（analysis.ts），见 tests 注释。
  */
 import { Dec, add, sub, mul, div, fromInt } from "./dec";
 import { f } from "./analysis";
