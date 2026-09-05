@@ -11,6 +11,7 @@ export function initQuiz() {
     btn.textContent = "再想想，重新作答";
     // 已作答则展开完整揭晓；未作答只显示鼓励
     document.getElementById("quiz-reveal")!.hidden = !replied;
+    document.getElementById("quiz-enc")!.hidden = replied;
     if (replied) {
       answer.scrollIntoView({ behavior: "smooth", block: "start" });
     }
