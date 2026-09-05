@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>π 在哪里？—— 亲手拼出又拼不出 π</title>
+<style>
+  :root {
+    --ink: #2b2b2b;
+    --dim: #777;
+    --line: #e3e0da;
+    --red: #c45a4a;
+    --blue: #4a6fa5;
+    --bg: #faf9f6;
+    --card: #ffffff;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: "Songti SC", "Noto Serif SC", Georgia, serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 720px; margin: 0 auto; padding: 20px 16px 48px; }
+  header { text-align: center; padding: 16px 0 8px; }
+  h1 { font-size: 26px; font-weight: 600; letter-spacing: 2px; margin: 0; }
+  header p { color: var(--dim); font-size: 14px; margin: 6px 0 0; }
+  nav {
+    display: flex; gap: 8px; justify-content: center;
+    margin: 18px 0 22px; flex-wrap: wrap;
+  }
+  nav button {
+    font: inherit; font-size: 15px;
+    padding: 7px 18px;
+    border: 1px solid var(--line);
+    background: var(--card);
+    color: var(--ink);
+    border-radius: 999px;
+    cursor: pointer;
+    transition: border-color .15s;
+  }
+  nav button.active { border-color: var(--ink); background: var(--ink); color: #fff; }
+  section h2 { font-size: 18px; margin: 0 0 4px; }
+  section .sub { color: var(--dim); font-size: 13px; margin: 0 0 14px; }
+  .formula {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 15px;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin: 10px 0 16px;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+  canvas { width: 100%; height: 300px; display: block; background: var(--card);
+    border: 1px solid var(--line); border-radius: 8px; }
+  .nums { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 13px; margin-top: 14px; }
+  .nums .row { display: flex; gap: 10px; padding: 4px 0; border-bottom: 1px dashed var(--line); }
+  .nums .k { color: var(--dim); flex: 0 0 92px; }
+  .nums .v { overflow-x: auto; white-space: nowrap; }
+  .nums .sum .v { color: var(--red); font-weight: 700; }
+  .btns { display: flex; gap: 8px; flex-wrap: wrap; margin: 12px 0; }
+  .btns button {
+    font: inherit; font-size: 14px; padding: 6px 14px;
+    border: 1px solid var(--line); background: var(--card); border-radius: 6px; cursor: pointer;
+  }
+  .btns button:hover { border-color: var(--ink); }
+  .quiz-q { font-size: 17px; margin: 10px 0 16px; }
+  textarea {
+    width: 100%; min-height: 88px; font: inherit; font-size: 15px;
+    border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px;
+    background: var(--card); resize: vertical;
+  }
+  .reveal { border-left: 3px solid var(--red); padding: 2px 0 2px 14px; margin: 18px 0; }
+  .reveal h3 { margin: 14px 0 6px; font-size: 15px; }
+  .reveal p, .reveal li { font-size: 14.5px; }
+  .reveal ul { padding-left: 20px; margin: 6px 0; }
+  footer { text-align: center; color: var(--dim); font-size: 12px; margin-top: 40px; }
+  @media (max-width: 480px) {
+    h1 { font-size: 21px; }
+    .nums { font-size: 11.5px; }
+    .nums .k { flex-basis: 72px; }
+    canvas { height: 240px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>π 在哪里？</h1>
+    <p>两个「看不见 π」的数，能相加等于 π 吗？</p>
+  </header>
+
+  <nav>
+    <button id="tab-cake">切蛋糕</button>
+    <button id="tab-ladder">莱布尼茨爬梯</button>
+    <button id="tab-quiz">出题</button>
+  </nav>
+
+  <!-- F2 切蛋糕 -->
+  <section id="view-cake">
+    <h2>切蛋糕</h2>
+    <p class="sub">∫₀¹ 4/(1+x²) dx = π。拖动切点 c，把 π 切成两块——无论怎么切，两块拼回来恒是 π。</p>
+    <div class="formula">A(c) = ∫₀ᶜ 4/(1+x²) dx　　B(c) = ∫꜀¹ 4/(1+x²) dx　　A + B = π</div>
+    <canvas id="cake-canvas"></canvas>
+    <div class="nums">
+      <div class="row"><span class="k">c</span><span class="v" id="cake-c"></span></div>
+      <div class="row"><span class="k">A（红）</span><span class="v" id="cake-A"></span></div>
+      <div class="row"><span class="k">B（蓝）</span><span class="v" id="cake-B"></span></div>
+      <div class="row sum"><span class="k">A + B</span><span class="v" id="cake-sum"></span></div>
+      <div class="row"><span class="k">π（对照）</span><span class="v" id="cake-pi"></span></div>
+    </div>
+  </section>
+
+  <!-- F3 莱布尼茨爬梯 -->
+  <section id="view-ladder" hidden>
+    <h2>莱布尼茨爬梯</h2>
+    <p class="sub">π/4 = 1 − 1/3 + 1/5 − 1/7 + …　没有任何一项含 π。奇数项从上方压下来，偶数项从下方顶上去，一步步把 π 勒出来。</p>
+    <div class="formula">Sₙ = 4 × (1 − 1/3 + 1/5 − … ± 1/(2n−1))</div>
+    <canvas id="lad-canvas"></canvas>
+    <div class="btns">
+      <button id="lad-plus1">+1 项</button>
+      <button id="lad-plus10">+10 项</button>
+      <button id="lad-plus100">+100 项</button>
+      <button id="lad-auto">自动步进</button>
+      <button id="lad-reset">重置</button>
+    </div>
+    <div class="nums">
+      <div class="row"><span class="k">已加项数</span><span class="v" id="lad-n"></span></div>
+      <div class="row"><span class="k">下一项</span><span class="v" id="lad-next"></span></div>
+      <div class="row sum"><span class="k">部分和 Sₙ</span><span class="v" id="lad-S"></span></div>
+      <div class="row"><span class="k">Sₙ − π</span><span class="v" id="lad-diff"></span></div>
+    </div>
+  </section>
+
+  <!-- F4 出题 -->
+  <section id="view-quiz" hidden>
+    <h2>出题</h2>
+    <p class="quiz-q"><b>你能造出两个与 π 无关的正数，使它们相加恰好等于 π 吗？</b></p>
+    <p class="sub">「与 π 无关」指：定义式中不出现 π、三角函数或任何超越常数——只用整数、有理数与平方。把你的答案写在下面，然后揭晓。</p>
+    <textarea id="quiz-input" placeholder="写下你的构造……（例如：1.5 和 π − 1.5 算不算？）"></textarea>
+    <div class="btns"><button id="quiz-btn">揭晓答案</button></div>
+    <div id="quiz-answer" hidden>
+      <p><b>先说坏消息：</b>如果你的两个数都是「与 π 无关」的代数数（整数、有理数、根式都是代数数），那么<b>严格不可能</b>。</p>
+      <div id="quiz-reveal" hidden>
+        <div class="reveal">
+          <h3>为什么不可能——超越数定理</h3>
+          <p>π 是<b>超越数</b>（林德曼，1882）：它不是任何整系数多项式方程的根。而代数数构成一个域——两个代数数相加，结果仍是代数数。所以两个代数数之和永远是代数数，永远到不了 π。这不是「很难」，是<b>被定理判了死刑</b>。像 1.5 和 π − 1.5 这样的答案，后者本身就含 π，作弊了。</p>
+          <h3>第一招：积分切蛋糕</h3>
+          <p>∫₀¹ 4/(1+x²) dx = π。定义里只有整数 4 和平方。在任意点 c 切开：A = ∫₀ᶜ 4/(1+x²) dx，B = ∫꜀¹ 4/(1+x²) dx。A 与 B 的数值一般来说是「无名」的数——但相加恰等于 π。（数学诚实提示：A、B 的精确值其实是 4·arctan(c) 与 4·arctan 的差，本质上仍是 π 的化身；「伪装」正在于此。）</p>
+          <h3>第二招：莱布尼茨级数</h3>
+          <p>π/4 = 1 − 1/3 + 1/5 − 1/7 + …　每一项都只是有理数。取奇数个项的部分和 S₂ₖ₊₁ 总在 π 上方，偶数个项的 S₂ₖ 总在 π 下方，两者从两侧夹逼 π——而任何有限部分和本身都不是 π。</p>
+          <p>去「切蛋糕」和「莱布尼茨爬梯」亲手玩玩这两招吧。</p>
+        </div>
+      </div>
+      <p id="quiz-enc" hidden>（写下你的想法后再点一次，看完整揭晓。）</p>
+    </div>
+  </section>
+
+  <footer>where-is-pi · 纯静态单文件 · 无网络请求</footer>
+</div>
+<script>
+/*__SCRIPT__*/
+</script>
+</body>
+</html>
