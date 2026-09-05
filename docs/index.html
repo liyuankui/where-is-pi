@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>π 在哪里？—— 亲手拼出又拼不出 π</title>
+<style>
+  :root {
+    --ink: #2b2b2b;
+    --dim: #777;
+    --line: #e3e0da;
+    --red: #c45a4a;
+    --blue: #4a6fa5;
+    --bg: #faf9f6;
+    --card: #ffffff;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: "Songti SC", "Noto Serif SC", Georgia, serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 720px; margin: 0 auto; padding: 20px 16px 48px; }
+  header { text-align: center; padding: 16px 0 8px; position: relative; }
+  h1 { font-size: 26px; font-weight: 600; letter-spacing: 2px; margin: 0; }
+  header p { color: var(--dim); font-size: 14px; margin: 6px 0 0; }
+  #lang-toggle {
+    position: absolute; top: 14px; right: 0;
+    font: inherit; font-size: 13px;
+    padding: 4px 12px;
+    border: 1px solid var(--line);
+    background: var(--card);
+    color: var(--ink);
+    border-radius: 999px;
+    cursor: pointer;
+  }
+  #lang-toggle:hover { border-color: var(--ink); }
+  nav {
+    display: flex; gap: 8px; justify-content: center;
+    margin: 18px 0 22px; flex-wrap: wrap;
+  }
+  nav button {
+    font: inherit; font-size: 15px;
+    padding: 7px 18px;
+    border: 1px solid var(--line);
+    background: var(--card);
+    color: var(--ink);
+    border-radius: 999px;
+    cursor: pointer;
+    transition: border-color .15s;
+  }
+  nav button.active { border-color: var(--ink); background: var(--ink); color: #fff; }
+  section h2 { font-size: 18px; margin: 0 0 4px; }
+  section .sub { color: var(--dim); font-size: 13px; margin: 0 0 14px; }
+  .formula {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 15px;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin: 10px 0 16px;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+  canvas { width: 100%; height: 300px; display: block; background: var(--card);
+    border: 1px solid var(--line); border-radius: 8px; }
+  .nums { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 13px; margin-top: 14px; }
+  .nums .row { display: flex; gap: 10px; padding: 4px 0; border-bottom: 1px dashed var(--line); }
+  .nums .k { color: var(--dim); flex: 0 0 92px; }
+  .nums .v { overflow-x: auto; white-space: nowrap; }
+  .nums .sum .v { color: var(--red); font-weight: 700; }
+  .btns { display: flex; gap: 8px; flex-wrap: wrap; margin: 12px 0; }
+  .btns button {
+    font: inherit; font-size: 14px; padding: 6px 14px;
+    border: 1px solid var(--line); background: var(--card); border-radius: 6px; cursor: pointer;
+  }
+  .btns button:hover { border-color: var(--ink); }
+  .quiz-q { font-size: 17px; margin: 10px 0 16px; }
+  textarea {
+    width: 100%; min-height: 88px; font: inherit; font-size: 15px;
+    border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px;
+    background: var(--card); resize: vertical;
+  }
+  .reveal { border-left: 3px solid var(--red); padding: 2px 0 2px 14px; margin: 18px 0; }
+  .reveal h3 { margin: 14px 0 6px; font-size: 15px; }
+  .reveal p, .reveal li { font-size: 14.5px; }
+  footer { text-align: center; color: var(--dim); font-size: 12px; margin-top: 40px; }
+  @media (max-width: 480px) {
+    h1 { font-size: 21px; }
+    .nums { font-size: 11.5px; }
+    .nums .k { flex-basis: 72px; }
+    canvas { height: 240px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <button id="lang-toggle" data-i18n="lang.toggle">EN</button>
+    <h1 data-i18n="app.title">π 在哪里？</h1>
+    <p data-i18n="app.subtitle">两个「看不见 π」的数，能相加等于 π 吗？</p>
+  </header>
+
+  <nav>
+    <button id="tab-cake" data-i18n="nav.cake">切蛋糕</button>
+    <button id="tab-ladder" data-i18n="nav.ladder">莱布尼茨爬梯</button>
+    <button id="tab-quiz" data-i18n="nav.quiz">出题</button>
+  </nav>
+
+  <!-- F2 切蛋糕 -->
+  <section id="view-cake">
+    <h2 data-i18n="cake.h2">切蛋糕</h2>
+    <p class="sub" data-i18n="cake.sub"></p>
+    <div class="formula">A(c) = ∫₀ᶜ 4/(1+x²) dx　　B(c) = ∫꜀¹ 4/(1+x²) dx　　A + B = π</div>
+    <canvas id="cake-canvas"></canvas>
+    <div class="nums">
+      <div class="row"><span class="k" data-i18n="cake.k.c">c</span><span class="v" id="cake-c"></span></div>
+      <div class="row"><span class="k" data-i18n="cake.k.A">A（红）</span><span class="v" id="cake-A"></span></div>
+      <div class="row"><span class="k" data-i18n="cake.k.B">B（蓝）</span><span class="v" id="cake-B"></span></div>
+      <div class="row sum"><span class="k" data-i18n="cake.k.sum">A + B</span><span class="v" id="cake-sum"></span></div>
+      <div class="row"><span class="k" data-i18n="cake.k.pi">π（对照）</span><span class="v" id="cake-pi"></span></div>
+    </div>
+  </section>
+
+  <!-- F3 莱布尼茨爬梯 -->
+  <section id="view-ladder" hidden>
+    <h2 data-i18n="lad.h2">莱布尼茨爬梯</h2>
+    <p class="sub" data-i18n="lad.sub"></p>
+    <div class="formula">Sₙ = 4 × (1 − 1/3 + 1/5 − … ± 1/(2n−1))</div>
+    <canvas id="lad-canvas"></canvas>
+    <div class="btns">
+      <button id="lad-plus1" data-i18n="lad.plus1">+1 项</button>
+      <button id="lad-plus10" data-i18n="lad.plus10">+10 项</button>
+      <button id="lad-plus100" data-i18n="lad.plus100">+100 项</button>
+      <button id="lad-auto" data-i18n="lad.auto">自动步进</button>
+      <button id="lad-reset" data-i18n="lad.reset">重置</button>
+    </div>
+    <div class="nums">
+      <div class="row"><span class="k" data-i18n="lad.k.n">已加项数</span><span class="v" id="lad-n"></span></div>
+      <div class="row"><span class="k" data-i18n="lad.k.next">下一项</span><span class="v" id="lad-next"></span></div>
+      <div class="row sum"><span class="k" data-i18n="lad.k.S">部分和 Sₙ</span><span class="v" id="lad-S"></span></div>
+      <div class="row"><span class="k" data-i18n="lad.k.diff">Sₙ − π</span><span class="v" id="lad-diff"></span></div>
+    </div>
+  </section>
+
+  <!-- F4 出题 -->
+  <section id="view-quiz" hidden>
+    <h2 data-i18n="quiz.h2">出题</h2>
+    <p class="quiz-q"><b data-i18n="quiz.question"></b></p>
+    <p class="sub" data-i18n="quiz.sub"></p>
+    <textarea id="quiz-input" data-i18n-placeholder="quiz.placeholder"></textarea>
+    <div class="btns"><button id="quiz-btn" data-i18n="quiz.btn">揭晓答案</button></div>
+    <div id="quiz-answer" hidden>
+      <p data-i18n-html="quiz.badnews"></p>
+      <div id="quiz-reveal" hidden>
+        <div class="reveal">
+          <h3 data-i18n="quiz.reveal.title1"></h3>
+          <p data-i18n-html="quiz.reveal.body1"></p>
+          <h3 data-i18n="quiz.reveal.title2"></h3>
+          <p data-i18n-html="quiz.reveal.body2"></p>
+          <h3 data-i18n="quiz.reveal.title3"></h3>
+          <p data-i18n-html="quiz.reveal.body3"></p>
+          <p data-i18n="quiz.reveal.close"></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer data-i18n="app.footer">where-is-pi · 纯静态单文件 · 无网络请求</footer>
+</div>
+<script>
+(()=>{var r={"app.title":"π 在哪里？","app.subtitle":"两个「看不见 π」的数，能相加等于 π 吗？","app.footer":"where-is-pi · 纯静态单文件 · 无网络请求","lang.toggle":"EN","nav.cake":"切蛋糕","nav.ladder":"莱布尼茨爬梯","nav.quiz":"出题","cake.h2":"切蛋糕","cake.sub":"∫₀¹ 4/(1+x²) dx = π。拖动切点 c，把 π 切成两块——无论怎么切，两块拼回来恒是 π。","cake.k.c":"c","cake.k.A":"A（红）","cake.k.B":"B（蓝）","cake.k.sum":"A + B","cake.k.pi":"π（对照）","cake.clabel":"切点 c = ","lad.h2":"莱布尼茨爬梯","lad.sub":"π/4 = 1 − 1/3 + 1/5 − 1/7 + …　没有任何一项含 π。奇数项从上方压下来，偶数项从下方顶上去，一步步把 π 勒出来。","lad.plus1":"+1 项","lad.plus10":"+10 项","lad.plus100":"+100 项","lad.auto":"自动步进","lad.auto.pause":"暂停","lad.reset":"重置","lad.k.n":"已加项数","lad.k.next":"下一项","lad.k.S":"部分和 Sₙ","lad.k.diff":"Sₙ − π","lad.empty":"（尚未开始）","quiz.h2":"出题","quiz.question":"你能造出两个与 π 无关的正数，使它们相加恰好等于 π 吗？","quiz.sub":"「与 π 无关」指：定义式中不出现 π、三角函数或任何超越常数——只用整数、有理数与平方。把你的答案写在下面，然后揭晓。","quiz.placeholder":"写下你的构造……（例如：1.5 和 π − 1.5 算不算？）","quiz.btn":"揭晓答案","quiz.btn.again":"再想想，重新作答","quiz.badnews":"<b>先说坏消息：</b>如果你的两个数都是「与 π 无关」的代数数（整数、有理数、根式都是代数数），那么<b>严格不可能</b>。","quiz.reveal.title1":"为什么不可能——超越数定理","quiz.reveal.body1":"π 是<b>超越数</b>（林德曼，1882）：它不是任何整系数多项式方程的根。而代数数构成一个域——两个代数数相加，结果仍是代数数。所以两个代数数之和永远是代数数，永远到不了 π。这不是「很难」，是<b>被定理判了死刑</b>。像 1.5 和 π − 1.5 这样的答案，后者本身就含 π，作弊了。","quiz.reveal.title2":"第一招：积分切蛋糕","quiz.reveal.body2":"∫₀¹ 4/(1+x²) dx = π。定义里只有整数 4 和平方。在任意点 c 切开：A = ∫₀ᶜ 4/(1+x²) dx，B = ∫꜀¹ 4/(1+x²) dx。A 与 B 的数值一般来说是「无名」的数——但相加恰等于 π。（数学诚实提示：A、B 的精确值其实是 4·arctan(c) 与 4·arctan 的差，本质上仍是 π 的化身；「伪装」正在于此。）","quiz.reveal.title3":"第二招：莱布尼茨级数","quiz.reveal.body3":"π/4 = 1 − 1/3 + 1/5 − 1/7 + …　每一项都只是有理数。取奇数个项的部分和 S₂ₖ₊₁ 总在 π 上方，偶数个项的 S₂ₖ 总在 π 下方，两者从两侧夹逼 π——而任何有限部分和本身都不是 π。","quiz.reveal.close":"去「切蛋糕」和「莱布尼茨爬梯」亲手玩玩这两招吧。"},e={"app.title":"Where Is π?","app.subtitle":"Can two numbers that never mention π add up to π?","app.footer":"where-is-pi · static single file · no network requests","lang.toggle":"中","nav.cake":"Slice the Cake","nav.ladder":"The Leibniz Ladder","nav.quiz":"Pop Quiz","cake.h2":"Slice the Cake","cake.sub":"∫₀¹ 4/(1+x²) dx = π. Drag the cut point c to slice π in two — however you cut it, the two pieces always reassemble into exactly π.","cake.k.c":"c","cake.k.A":"A (red)","cake.k.B":"B (blue)","cake.k.sum":"A + B","cake.k.pi":"π (reference)","cake.clabel":"cut c = ","lad.h2":"The Leibniz Ladder","lad.sub":"π/4 = 1 − 1/3 + 1/5 − 1/7 + …  Not a single term contains π. Odd partial sums press down from above, even ones push up from below — π gets squeezed out, one step at a time.","lad.plus1":"+1 term","lad.plus10":"+10 terms","lad.plus100":"+100 terms","lad.auto":"Auto-step","lad.auto.pause":"Pause","lad.reset":"Reset","lad.k.n":"Terms so far","lad.k.next":"Next term","lad.k.S":"Partial sum Sₙ","lad.k.diff":"Sₙ − π","lad.empty":"(not started yet)","quiz.h2":"Pop Quiz","quiz.question":"Can you build two positive numbers that have nothing to do with π, yet add up to exactly π?","quiz.sub":'"Nothing to do with π" means their definitions contain no π, no trigonometric functions, no transcendental constants — only integers, rationals, and squares. Write your attempt below, then reveal the answer.',"quiz.placeholder":"Write down your construction… (e.g., do 1.5 and π − 1.5 count?)","quiz.btn":"Reveal the answer","quiz.btn.again":"Rethink and answer again","quiz.badnews":'<b>Bad news first:</b> if both of your numbers are algebraic numbers "unrelated to π" (integers, rationals, and radicals are all algebraic), then it is <b>strictly impossible</b>.',"quiz.reveal.title1":"Why it's impossible — the transcendence of π","quiz.reveal.body1":`π is a <b>transcendental number</b> (Lindemann, 1882): it is not a root of any polynomial equation with integer coefficients. And the algebraic numbers form a field — the sum of two algebraic numbers is always algebraic. So the sum of two algebraic numbers can never reach π. This isn't "very hard"; it's <b>ruled out by a theorem</b>. An answer like 1.5 and π − 1.5 is cheating: the latter contains π itself.`,"quiz.reveal.title2":"Trick #1: slice the integral","quiz.reveal.body2":"∫₀¹ 4/(1+x²) dx = π. The definition involves nothing but the integer 4 and a square. Cut at any point c: A = ∫₀ᶜ 4/(1+x²) dx, B = ∫꜀¹ 4/(1+x²) dx. Neither A nor B is a number with a familiar name — yet they add up to exactly π. (Honesty note: A and B are really 4·arctan(c) and its complement — π in disguise; that's precisely the trick.)","quiz.reveal.title3":"Trick #2: the Leibniz series","quiz.reveal.body3":"π/4 = 1 − 1/3 + 1/5 − 1/7 + …  Every term is a plain rational number. The odd partial sums S₂ₖ₊₁ always sit above π, the even ones S₂ₖ always below, squeezing π from both sides — while no finite partial sum ever equals π.","quiz.reveal.close":'Go try both tricks yourself in "Slice the Cake" and "The Leibniz Ladder".'},SG={zh:r,en:e},fG={...r},DG={...e},b="zh";function B(G){return SG[b][G]??r[G]??G}function t(){return b}function GG(){try{let G=new URLSearchParams(window.location.search).get("lang");if(G==="en"||G==="zh")return G}catch{}try{let G=localStorage.getItem("lang");if(G==="en"||G==="zh")return G}catch{}try{if(navigator.language?.toLowerCase().startsWith("zh"))return"zh"}catch{}return"en"}function x(G,J=!0){if(b=G,J)try{localStorage.setItem("lang",G)}catch{}if(MG(),typeof window<"u")window.dispatchEvent(new Event("langchange"))}function MG(){if(typeof document>"u")return;document.documentElement.lang=b==="zh"?"zh-CN":"en",document.title=B("app.title"),document.querySelectorAll("[data-i18n]").forEach((G)=>{G.textContent=B(G.dataset.i18n)}),document.querySelectorAll("[data-i18n-html]").forEach((G)=>{G.innerHTML=B(G.dataset.i18nHtml)}),document.querySelectorAll("[data-i18n-placeholder]").forEach((G)=>{G.setAttribute("placeholder",B(G.dataset.i18nPlaceholder))})}var E=10n**BigInt(40);var A=E,wG=2n*E,V=(G)=>BigInt(G)*E;function z(G,J){if(J===0n)throw Error("division by zero");let K=G<0n!==J<0n,W=G<0n?-G:G,Q=J<0n?-J:J,R=W*E/Q;if(2n*(W*E%Q)>=Q)R+=1n;return K?-R:R}var q=(G,J)=>G*J/E,O=(G,J)=>G+J,Y=(G,J)=>G-J;function JG(G){if(G<0n)throw Error("sqrt of negative");if(G===0n)return 0n;let J=G*E,K=Math.sqrt(Number(G)/Number(E)),W=K>0?BigInt(Math.round(K*Number(E))):1n;if(W<=0n)W=1n;W+=W/1000n+1n;while(!0){let Q=(W+J/W)/2n;if(Q>=W)break;W=Q}while(W*W>J)W-=1n;return W}function S(G,J=30){let K=G<0n,W=K?-G:G,Q=10n**BigInt(40-J),Z=((W+Q/2n)/Q).toString().padStart(J+1,"0"),j=Z.slice(0,Z.length-J),M=J>0?"."+Z.slice(Z.length-J):"";return(K?"-":"")+j+M}var FG=z(A,V(2));function c(G){let J=G,K=0;while(J>FG){let j=JG(O(A,q(J,J)));J=z(J,O(A,j)),K++}let W=J,Q=q(J,J),R=W,Z=1n;while(!0){W=q(W,Q);let j=z(W,V(Z*2n+1n));if(j===0n)break;R=Z%2n===0n?O(R,j):Y(R,j),Z++}for(let j=0;j<K;j++)R=q(R,V(2));return R}function v(){return q(V(4),c(A))}function KG(G){return q(V(4),c(G))}function WG(G){let J=z(Y(A,G),O(A,G));return q(V(4),c(J))}function N(G){let J=document.getElementById(G),K=window.devicePixelRatio||1,W=J.getBoundingClientRect(),Q=W.width,R=W.height;J.width=Math.round(Q*K),J.height=Math.round(R*K);let Z=J.getContext("2d");return Z.setTransform(K,0,0,K,0,0),{canvas:J,ctx:Z,w:Q,h:R}}function $G(G,J){G.style.touchAction="none";let K=(W)=>{let Q=G.getBoundingClientRect(),R=(W.clientX-Q.left)/Q.width;J(Math.min(1,Math.max(0,R)))};G.addEventListener("pointerdown",(W)=>{G.setPointerCapture(W.pointerId),K(W)}),G.addEventListener("pointermove",(W)=>{if(W.buttons>0||W.pointerType==="touch")K(W)})}var AG=v(),l=30,I=z(V(1),V(2)),u,d=!1;function EG(){if(d)return;d=!0,requestAnimationFrame(()=>{d=!1,QG()})}function HG(G){return 4/(1+G*G)}function n(){let{ctx:G,w:J,h:K}=u,W=34,Q=26,R=12,Z=12,j=J-34-12,M=K-12-26,U=($)=>34+$*j,m=($)=>12+M-$/4*M;G.clearRect(0,0,J,K);let T=2,_=($)=>12+M-($-T)/(4-T)*M,C=Number(I)/10000000000000000000000000000000000000000;for(let $ of[0,1]){G.beginPath();let F=$===0?0:C,H=$===0?C:1;if(H-F<=0)continue;G.moveTo(U(F),_(T));for(let L=0;L<=200;L++){let X=F+(H-F)*L/200;G.lineTo(U(X),_(HG(X)))}G.lineTo(U(H),_(T)),G.closePath(),G.fillStyle=$===0?"rgba(196,90,74,0.35)":"rgba(74,111,165,0.35)",G.fill()}G.beginPath();for(let $=0;$<=400;$++){let F=$/400,H=[U(F),_(HG(F))];$===0?G.moveTo(H[0],H[1]):G.lineTo(H[0],H[1])}G.strokeStyle="#333",G.lineWidth=2,G.stroke(),G.fillStyle="#888",G.font="11px system-ui",G.textAlign="center";for(let $ of[0,0.25,0.5,0.75,1])G.fillText($.toFixed(2),U($),K-8);G.textAlign="right";for(let $ of[2,3,4])G.fillText(String($),28,_($)+4);G.strokeStyle="#c45a4a",G.lineWidth=1.5,G.beginPath(),G.moveTo(U(C),12),G.lineTo(U(C),12+M),G.stroke(),G.fillStyle="#c45a4a",G.textAlign="left",G.fillText(B("cake.clabel")+C.toFixed(4),Math.min(U(C)+6,J-60),24)}function QG(){let G=KG(I),J=WG(I),K=G+J;w("cake-A",S(G,l)),w("cake-B",S(J,l)),w("cake-sum",S(K,l)),w("cake-pi",S(AG,l)),w("cake-c",(Number(I)/10000000000000000000000000000000000000000).toFixed(6)),n()}function w(G,J){document.getElementById(G).textContent=J}function RG(){u=N("cake-canvas"),$G(u.canvas,(G)=>{I=BigInt(Math.round(G*10000000000000000000000000000000000000000)),EG()}),QG(),window.addEventListener("resize",()=>{u=N("cake-canvas"),n()}),window.addEventListener("langchange",n)}class s{sum=kG();k=0;get terms(){return this.k}get value(){return this.sum}step(){let G=V(2*this.k+1),J=z(A,G);return this.sum=this.k%2===0?O(this.sum,J):Y(this.sum,J),this.k++,this.sum}nextTerm(){return z(A,V(2*this.k+1))}get nextSign(){return this.k%2===0?1:-1}reset(){this.sum=0n,this.k=0}}function kG(){return 0n}var OG=v(),f=Math.PI,VG=24,h=new s,D=[],p=0n,a,P=null;function TG(){return[f-0.9,f+0.9]}function LG(G){p=G,D.push(Number(G)/10000000000000000000000000000000000000000)}function ZG(){let{ctx:G,w:J,h:K}=a,W=44,Q=12,R=12,Z=26,j=J-44-12,M=K-12-26,U=Math.max(D.length,10),[m,T]=TG(),_=(H)=>44+H/U*j,C=(H)=>12+M-(H-m)/(T-m)*M;G.clearRect(0,0,J,K),G.strokeStyle="#c45a4a",G.setLineDash([5,4]),G.beginPath(),G.moveTo(44,C(f)),G.lineTo(J-12,C(f)),G.stroke(),G.setLineDash([]),G.fillStyle="#c45a4a",G.textAlign="right",G.font="12px ui-monospace, monospace",G.fillText("π",38,C(f)+4);let $=C(f);for(let H=0;H<D.length;H++){let L=(H+1)%2===1;G.fillStyle=L?"rgba(196,90,74,0.9)":"rgba(74,111,165,0.9)";let X=C(D[H]),i=Math.max(1,_(1)-_(0));if(L)G.fillRect(_(H),X,i,Math.max(1,$-X));else G.fillRect(_(H),$,i,Math.max(1,X-$))}G.fillStyle="#888",G.font="11px system-ui",G.textAlign="center";let F=Math.max(1,Math.round(U/8));for(let H=F;H<=D.length;H+=F)G.fillText(String(H),_(H-0.5),K-8)}function o(){let G=h.terms;k("lad-n",String(G));let J=h.nextTerm();if(k("lad-next",(h.nextSign>0?"+":"−")+S(q(J,V(4)),12)),G>0){k("lad-S",S(q(p,V(4)),VG));let K=q(p,V(4))-OG;k("lad-diff",(K>0n?"+":K<0n?"−":"")+S(K<0n?-K:K,VG))}else k("lad-S",B("lad.empty")),k("lad-diff","");ZG()}function y(G=1){for(let J=0;J<G;J++)LG(h.step());o()}function XG(){jG(),h.reset(),D.length=0,p=0n,o()}function jG(){if(P)clearInterval(P),P=null,k("lad-auto",B("lad.auto"))}function YG(){if(P){jG();return}k("lad-auto",B("lad.auto.pause")),P=setInterval(()=>y(1),120)}function k(G,J){document.getElementById(G).textContent=J}function g(G,J,K){document.getElementById(G).addEventListener(J,K)}function BG(){a=N("lad-canvas"),g("lad-plus1","click",()=>y(1)),g("lad-plus10","click",()=>y(10)),g("lad-plus100","click",()=>y(100)),g("lad-auto","click",YG),g("lad-reset","click",XG),o(),window.addEventListener("resize",()=>{a=N("lad-canvas"),ZG()}),window.addEventListener("langchange",()=>{if(P)k("lad-auto",B("lad.auto.pause"));o()})}var qG=!1;function CG(){let G=document.getElementById("quiz-btn"),J=document.getElementById("quiz-input"),K=document.getElementById("quiz-answer");G.addEventListener("click",()=>{let W=J.value.trim().length>0;if(qG=!0,K.hidden=!1,G.textContent=B("quiz.btn.again"),document.getElementById("quiz-reveal").hidden=!W,W)K.scrollIntoView({behavior:"smooth",block:"start"})}),window.addEventListener("langchange",()=>{if(qG)G.textContent=B("quiz.btn.again")})}var _G=["cake","ladder","quiz"],NG={cake:RG,ladder:BG,quiz:CG},UG=new Set;x(GG(),!1);document.getElementById("lang-toggle").addEventListener("click",()=>{x(t()==="zh"?"en":"zh")});function zG(G){for(let J of _G)document.getElementById(`view-${J}`).hidden=J!==G,document.getElementById(`tab-${J}`).classList.toggle("active",J===G);if(!UG.has(G))NG[G](),UG.add(G);else if(G==="cake"||G==="ladder")window.dispatchEvent(new Event("resize"))}for(let G of _G)document.getElementById(`tab-${G}`).addEventListener("click",()=>zG(G));zG("cake");})();
+
+</script>
+</body>
+</html>
