@@ -1,3 +1,4 @@
+import { detectLang, setLang, getLang } from "./i18n";
 import { initCake } from "./modes/cake";
 import { initLadder } from "./modes/ladder";
 import { initQuiz } from "./modes/quiz";
@@ -11,6 +12,13 @@ const inits: Record<Mode, () => void> = {
   quiz: initQuiz,
 };
 const inited = new Set<Mode>();
+
+// F7 双语：初始语言（?lang= → localStorage → navigator.language），首次不落盘
+setLang(detectLang(), false);
+
+document.getElementById("lang-toggle")!.addEventListener("click", () => {
+  setLang(getLang() === "zh" ? "en" : "zh"); // 显式切换才持久化
+});
 
 function switchTo(m: Mode) {
   for (const x of MODES) {

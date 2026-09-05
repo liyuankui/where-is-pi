@@ -1,6 +1,7 @@
 /** 莱布尼茨爬梯：逐项/自动步进，奇偶部分和上下夹逼 π */
 import { Leibniz, mul, fromInt, toFixed } from "../math/leibniz";
 import { computePi } from "../math/analysis";
+import { t } from "../i18n";
 import { setupCanvas, type Ctx2D } from "../render/canvas";
 
 const PI = computePi();
@@ -77,7 +78,7 @@ function update() {
     const d = mul(current, fromInt(4)) - PI;
     set("lad-diff", (d > 0n ? "+" : d < 0n ? "−" : "") + toFixed(d < 0n ? -d : d, DISPLAY));
   } else {
-    set("lad-S", "（尚未开始）");
+    set("lad-S", t("lad.empty"));
     set("lad-diff", "");
   }
   draw();
@@ -100,7 +101,7 @@ function stopAuto() {
   if (autoTimer) {
     clearInterval(autoTimer);
     autoTimer = null;
-    set("lad-auto", "自动步进");
+    set("lad-auto", t("lad.auto"));
   }
 }
 
@@ -109,7 +110,7 @@ function toggleAuto() {
     stopAuto();
     return;
   }
-  set("lad-auto", "暂停");
+  set("lad-auto", t("lad.auto.pause"));
   autoTimer = setInterval(() => step(1), 120);
 }
 
@@ -132,5 +133,10 @@ export function initLadder() {
   window.addEventListener("resize", () => {
     g = setupCanvas("lad-canvas");
     draw();
+  });
+  // F7：切换语言刷新动态文案与画布，不重置步进进度
+  window.addEventListener("langchange", () => {
+    if (autoTimer) set("lad-auto", t("lad.auto.pause")); // 自动步进中保持「暂停」文案
+    update();
   });
 }

@@ -8,6 +8,7 @@ import {
   toFixed,
 } from "../math/analysis";
 import { setupCanvas, bindDrag, type Ctx2D } from "../render/canvas";
+import { t } from "../i18n";
 
 const PI = computePi();
 const DISPLAY = 30;
@@ -73,8 +74,8 @@ function draw() {
   ctx.fillStyle = "#888";
   ctx.font = "11px system-ui";
   ctx.textAlign = "center";
-  for (const t of [0, 0.25, 0.5, 0.75, 1]) {
-    ctx.fillText(t.toFixed(2), X(t), h - 8);
+  for (const tick of [0, 0.25, 0.5, 0.75, 1]) {
+    ctx.fillText(tick.toFixed(2), X(tick), h - 8);
   }
   ctx.textAlign = "right";
   for (const yy of [2, 3, 4]) {
@@ -90,7 +91,7 @@ function draw() {
   ctx.stroke();
   ctx.fillStyle = "#c45a4a";
   ctx.textAlign = "left";
-  ctx.fillText("c = " + cx.toFixed(4), Math.min(X(cx) + 6, w - 60), padT + 12);
+  ctx.fillText(t("cake.clabel") + cx.toFixed(4), Math.min(X(cx) + 6, w - 60), padT + 12);
 }
 
 function updateNumbers() {
@@ -121,4 +122,6 @@ export function initCake() {
     g = setupCanvas("cake-canvas");
     draw();
   });
+  // F7：切换语言仅重绘画布标注，不动切点 c
+  window.addEventListener("langchange", draw);
 }
